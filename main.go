@@ -8,8 +8,8 @@ import (
 	"strings"
 
 	transit "github.com/babashka/transit-go"
-	"github.com/poyo-ai/pod-golang-image/babashka"
-	podimage "github.com/poyo-ai/pod-golang-image/image"
+	"github.com/minikomi/pod-golang-image/babashka"
+	podimage "github.com/minikomi/pod-golang-image/image"
 )
 
 func main() {
@@ -37,7 +37,7 @@ func handleDescribe(message *babashka.Message) {
 		Format: "transit+json",
 		Namespaces: []babashka.Namespace{
 			{
-				Name: "pod.poyo.image",
+				Name: "co.poyo.pod-golang-image",
 				Vars: []babashka.Var{
 					{Name: "info"},
 					{Name: "resize"},
@@ -56,21 +56,21 @@ func handleDescribe(message *babashka.Message) {
 
 func handleInvoke(message *babashka.Message) {
 	switch message.Var {
-	case "pod.poyo.image/info":
+	case "co.poyo.pod-golang-image/info":
 		handleInfo(message)
-	case "pod.poyo.image/resize":
+	case "co.poyo.pod-golang-image/resize":
 		handleResize(message)
-	case "pod.poyo.image/to-base64":
+	case "co.poyo.pod-golang-image/to-base64":
 		handleToBase64(message)
-	case "pod.poyo.image/rotate":
+	case "co.poyo.pod-golang-image/rotate":
 		handleRotate(message)
-	case "pod.poyo.image/flip":
+	case "co.poyo.pod-golang-image/flip":
 		handleFlip(message)
-	case "pod.poyo.image/crop":
+	case "co.poyo.pod-golang-image/crop":
 		handleCrop(message)
-	case "pod.poyo.image/grayscale":
+	case "co.poyo.pod-golang-image/grayscale":
 		handleGrayscale(message)
-	case "pod.poyo.image/draw-text":
+	case "co.poyo.pod-golang-image/draw-text":
 		handleDrawText(message)
 	default:
 		err := fmt.Errorf("unknown var: %s", message.Var)

@@ -5,7 +5,7 @@
          '[clojure.string :as str])
 
 (pods/load-pod "./pod-golang-image")
-(require '[pod.poyo.image :as img])
+(require '[co.poyo.pod-golang-image :as img])
 
 (println "=== pod-golang-image Example ===")
 (println)

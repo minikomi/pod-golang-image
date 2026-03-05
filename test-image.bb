@@ -3,7 +3,7 @@
 ;; Comprehensive test suite for pod-golang-image
 (require '[babashka.pods :as pods])
 (pods/load-pod "./pod-golang-image")
-(require '[pod.poyo.image :as img])
+(require '[co.poyo.pod-golang-image :as img])
 
 (println "Pod loaded successfully!")
 (println "\nTesting pod.poyo.image functions (8 total):\n")

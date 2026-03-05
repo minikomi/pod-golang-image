@@ -3,7 +3,7 @@
 ;; Demo of new image manipulation features
 (require '[babashka.pods :as pods])
 (pods/load-pod "./pod-golang-image")
-(require '[pod.poyo.image :as img])
+(require '[co.poyo.pod-golang-image :as img])
 
 (println "===========================================")
 (println "  New Image Manipulation Features Demo")

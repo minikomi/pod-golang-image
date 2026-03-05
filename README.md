@@ -26,7 +26,7 @@ go build -o pod-golang-image .
 #!/usr/bin/env bb
 (require '[babashka.pods :as pods])
 (pods/load-pod "./pod-golang-image")
-(require '[pod.poyo.image :as img])
+(require '[co.poyo.pod-golang-image :as img])
 
 ;; Get image info (fast, header-only)
 (img/info "/path/to/photo.jpg")
@@ -71,7 +71,7 @@ go build -o pod-golang-image .
 
 ## API
 
-### `pod.poyo.image/info`
+### `co.poyo.pod-golang-image/info`
 
 Get image dimensions and MIME type without loading the full image.
 
@@ -85,7 +85,7 @@ Get image dimensions and MIME type without loading the full image.
  :media-type "image/jpeg"}
 ```
 
-### `pod.poyo.image/resize`
+### `co.poyo.pod-golang-image/resize`
 
 Resize an image and return as base64.
 
@@ -109,7 +109,7 @@ If the image already fits within constraints, it won't be upscaled.
  :media-type "image/png"}
 ```
 
-### `pod.poyo.image/to-base64`
+### `co.poyo.pod-golang-image/to-base64`
 
 Encode an image as base64 without resizing.
 
@@ -124,7 +124,7 @@ Encode an image as base64 without resizing.
  :media-type "image/jpeg"}
 ```
 
-### `pod.poyo.image/rotate`
+### `co.poyo.pod-golang-image/rotate`
 
 Rotate an image by a specified angle.
 
@@ -141,7 +141,7 @@ Rotate an image by a specified angle.
  :media-type "image/jpeg"}
 ```
 
-### `pod.poyo.image/flip`
+### `co.poyo.pod-golang-image/flip`
 
 Flip an image horizontally or vertically.
 
@@ -158,7 +158,7 @@ Flip an image horizontally or vertically.
  :media-type "image/jpeg"}
 ```
 
-### `pod.poyo.image/crop`
+### `co.poyo.pod-golang-image/crop`
 
 Extract a rectangular region from an image.
 
@@ -178,7 +178,7 @@ Extract a rectangular region from an image.
  :media-type "image/jpeg"}
 ```
 
-### `pod.poyo.image/grayscale`
+### `co.poyo.pod-golang-image/grayscale`
 
 Convert an image to grayscale.
 
@@ -193,7 +193,7 @@ Convert an image to grayscale.
  :media-type "image/jpeg"}
 ```
 
-### `pod.poyo.image/draw-text`
+### `co.poyo.pod-golang-image/draw-text`
 
 Draw text on an image (useful for watermarks).
 

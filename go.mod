@@ -1,4 +1,4 @@
-module github.com/poyo-ai/pod-golang-image
+module github.com/minikomi/pod-golang-image
 
 go 1.22.2
 
