@@ -1,4 +1,10 @@
+# Binary
 pod-golang-image
-test.png
-*.bb
-/tmp/
+
+# Test files
+*.jpg
+*.jpeg
+*.png
+*.gif
+*.webp
+*.ppm
