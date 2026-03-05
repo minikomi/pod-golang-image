@@ -6,6 +6,9 @@ A [babashka pod](https://github.com/babashka/pods) that exposes Go's image libra
 
 - **Fast image info** - Get dimensions and MIME type without loading the full image
 - **High-quality resizing** - Uses Catmull-Rom interpolation for excellent quality
+- **Geometric transformations** - Rotate (any angle), flip (horizontal/vertical), crop
+- **Color operations** - Grayscale conversion
+- **Text rendering** - Draw text on images for watermarks
 - **Multiple formats** - Decode JPEG, PNG, GIF, WebP; encode JPEG, PNG
 - **Base64 encoding** - Return images as base64 for easy embedding
 
@@ -43,6 +46,26 @@ go build -o pod-golang-image .
 
 ;; Encode to base64 without resizing
 (img/to-base64 "/path/to/photo.jpg")
+;; => {:data "..." :width 4000 :height 3000 :media-type "image/jpeg"}
+
+;; Rotate image
+(img/rotate "/path/to/photo.jpg" {:degrees 90})
+;; => {:data "..." :width 3000 :height 4000 :media-type "image/jpeg"}
+
+;; Flip image
+(img/flip "/path/to/photo.jpg" {:direction "horizontal"})
+;; => {:data "..." :width 4000 :height 3000 :media-type "image/jpeg"}
+
+;; Crop image
+(img/crop "/path/to/photo.jpg" {:x 100 :y 100 :width 800 :height 600})
+;; => {:data "..." :width 800 :height 600 :media-type "image/jpeg"}
+
+;; Convert to grayscale
+(img/grayscale "/path/to/photo.jpg")
+;; => {:data "..." :width 4000 :height 3000 :media-type "image/jpeg"}
+
+;; Draw text (watermark)
+(img/draw-text "/path/to/photo.jpg" {:text "© 2024" :x 10 :y 30 :color "#FF0000"})
 ;; => {:data "..." :width 4000 :height 3000 :media-type "image/jpeg"}
 ```
 
@@ -92,6 +115,97 @@ Encode an image as base64 without resizing.
 
 **Arguments:**
 - `path` - String path to image file
+
+**Returns:**
+```clojure
+{:data "...base64..."
+ :width 4000
+ :height 3000
+ :media-type "image/jpeg"}
+```
+
+### `pod.poyo.image/rotate`
+
+Rotate an image by a specified angle.
+
+**Arguments:**
+- `path` - String path to image file
+- `opts` - Optional map of options:
+  - `:degrees N` - Rotation angle in degrees (90, 180, 270, or any angle)
+
+**Returns:**
+```clojure
+{:data "...base64..."
+ :width 3000
+ :height 4000
+ :media-type "image/jpeg"}
+```
+
+### `pod.poyo.image/flip`
+
+Flip an image horizontally or vertically.
+
+**Arguments:**
+- `path` - String path to image file
+- `opts` - Optional map of options:
+  - `:direction "horizontal"` or `"vertical"` (default: "horizontal")
+
+**Returns:**
+```clojure
+{:data "...base64..."
+ :width 4000
+ :height 3000
+ :media-type "image/jpeg"}
+```
+
+### `pod.poyo.image/crop`
+
+Extract a rectangular region from an image.
+
+**Arguments:**
+- `path` - String path to image file
+- `opts` - Map of options:
+  - `:x N` - X coordinate of top-left corner (default: 0)
+  - `:y N` - Y coordinate of top-left corner (default: 0)
+  - `:width N` - Width of crop region (required)
+  - `:height N` - Height of crop region (required)
+
+**Returns:**
+```clojure
+{:data "...base64..."
+ :width 800
+ :height 600
+ :media-type "image/jpeg"}
+```
+
+### `pod.poyo.image/grayscale`
+
+Convert an image to grayscale.
+
+**Arguments:**
+- `path` - String path to image file
+
+**Returns:**
+```clojure
+{:data "...base64..."
+ :width 4000
+ :height 3000
+ :media-type "image/jpeg"}
+```
+
+### `pod.poyo.image/draw-text`
+
+Draw text on an image (useful for watermarks).
+
+**Arguments:**
+- `path` - String path to image file
+- `opts` - Map of options:
+  - `:text "..."` - Text to draw (required)
+  - `:x N` - X coordinate (default: 10)
+  - `:y N` - Y coordinate (default: 20)
+  - `:color "#RRGGBB"` - Text color in hex format (default: "#000000")
+
+Supported colors: hex format (#FF0000) or named colors (black, white, red, green, blue)
 
 **Returns:**
 ```clojure

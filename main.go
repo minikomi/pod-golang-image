@@ -42,6 +42,11 @@ func handleDescribe(message *babashka.Message) {
 					{Name: "info"},
 					{Name: "resize"},
 					{Name: "to-base64"},
+					{Name: "rotate"},
+					{Name: "flip"},
+					{Name: "crop"},
+					{Name: "grayscale"},
+					{Name: "draw-text"},
 				},
 			},
 		},
@@ -57,6 +62,16 @@ func handleInvoke(message *babashka.Message) {
 		handleResize(message)
 	case "pod.poyo.image/to-base64":
 		handleToBase64(message)
+	case "pod.poyo.image/rotate":
+		handleRotate(message)
+	case "pod.poyo.image/flip":
+		handleFlip(message)
+	case "pod.poyo.image/crop":
+		handleCrop(message)
+	case "pod.poyo.image/grayscale":
+		handleGrayscale(message)
+	case "pod.poyo.image/draw-text":
+		handleDrawText(message)
 	default:
 		err := fmt.Errorf("unknown var: %s", message.Var)
 		babashka.WriteErrorResponse(message, err)
@@ -220,4 +235,181 @@ func parseResizeOptions(opts map[interface{}]interface{}) podimage.ResizeOptions
 	}
 
 	return result
+}
+
+func handleRotate(message *babashka.Message) {
+	argsList, err := parseArgs(message.Args)
+	if err != nil {
+		babashka.WriteErrorResponse(message, fmt.Errorf("failed to parse args: %w", err))
+		return
+	}
+
+	if argsList.Len() < 1 || argsList.Len() > 2 {
+		babashka.WriteErrorResponse(message, fmt.Errorf("rotate expects 1 or 2 arguments, got %d", argsList.Len()))
+		return
+	}
+
+	path, ok := argsList.Front().Value.(string)
+	if !ok {
+		babashka.WriteErrorResponse(message, fmt.Errorf("first argument must be a string (path)"))
+		return
+	}
+
+	// Parse options if provided
+	opts := make(map[interface{}]interface{})
+	if argsList.Len() == 2 {
+		optsElement := argsList.Front().Next()
+		if optsMap, ok := optsElement.Value.(map[interface{}]interface{}); ok {
+			opts = optsMap
+		} else {
+			babashka.WriteErrorResponse(message, fmt.Errorf("second argument must be a map (options)"))
+			return
+		}
+	}
+
+	result, err := podimage.Rotate(path, opts)
+	if err != nil {
+		babashka.WriteErrorResponse(message, err)
+		return
+	}
+
+	respond(message, result)
+}
+
+func handleFlip(message *babashka.Message) {
+	argsList, err := parseArgs(message.Args)
+	if err != nil {
+		babashka.WriteErrorResponse(message, fmt.Errorf("failed to parse args: %w", err))
+		return
+	}
+
+	if argsList.Len() < 1 || argsList.Len() > 2 {
+		babashka.WriteErrorResponse(message, fmt.Errorf("flip expects 1 or 2 arguments, got %d", argsList.Len()))
+		return
+	}
+
+	path, ok := argsList.Front().Value.(string)
+	if !ok {
+		babashka.WriteErrorResponse(message, fmt.Errorf("first argument must be a string (path)"))
+		return
+	}
+
+	// Parse options if provided
+	opts := make(map[interface{}]interface{})
+	if argsList.Len() == 2 {
+		optsElement := argsList.Front().Next()
+		if optsMap, ok := optsElement.Value.(map[interface{}]interface{}); ok {
+			opts = optsMap
+		} else {
+			babashka.WriteErrorResponse(message, fmt.Errorf("second argument must be a map (options)"))
+			return
+		}
+	}
+
+	result, err := podimage.Flip(path, opts)
+	if err != nil {
+		babashka.WriteErrorResponse(message, err)
+		return
+	}
+
+	respond(message, result)
+}
+
+func handleCrop(message *babashka.Message) {
+	argsList, err := parseArgs(message.Args)
+	if err != nil {
+		babashka.WriteErrorResponse(message, fmt.Errorf("failed to parse args: %w", err))
+		return
+	}
+
+	if argsList.Len() != 2 {
+		babashka.WriteErrorResponse(message, fmt.Errorf("crop expects 2 arguments, got %d", argsList.Len()))
+		return
+	}
+
+	path, ok := argsList.Front().Value.(string)
+	if !ok {
+		babashka.WriteErrorResponse(message, fmt.Errorf("first argument must be a string (path)"))
+		return
+	}
+
+	optsElement := argsList.Front().Next()
+	var opts map[interface{}]interface{}
+	if optsMap, ok := optsElement.Value.(map[interface{}]interface{}); ok {
+		opts = optsMap
+	} else {
+		babashka.WriteErrorResponse(message, fmt.Errorf("second argument must be a map (options)"))
+		return
+	}
+
+	result, err := podimage.Crop(path, opts)
+	if err != nil {
+		babashka.WriteErrorResponse(message, err)
+		return
+	}
+
+	respond(message, result)
+}
+
+func handleGrayscale(message *babashka.Message) {
+	argsList, err := parseArgs(message.Args)
+	if err != nil {
+		babashka.WriteErrorResponse(message, fmt.Errorf("failed to parse args: %w", err))
+		return
+	}
+
+	if argsList.Len() != 1 {
+		babashka.WriteErrorResponse(message, fmt.Errorf("grayscale expects 1 argument, got %d", argsList.Len()))
+		return
+	}
+
+	path, ok := argsList.Front().Value.(string)
+	if !ok {
+		babashka.WriteErrorResponse(message, fmt.Errorf("first argument must be a string (path)"))
+		return
+	}
+
+	result, err := podimage.Grayscale(path)
+	if err != nil {
+		babashka.WriteErrorResponse(message, err)
+		return
+	}
+
+	respond(message, result)
+}
+
+func handleDrawText(message *babashka.Message) {
+	argsList, err := parseArgs(message.Args)
+	if err != nil {
+		babashka.WriteErrorResponse(message, fmt.Errorf("failed to parse args: %w", err))
+		return
+	}
+
+	if argsList.Len() != 2 {
+		babashka.WriteErrorResponse(message, fmt.Errorf("draw-text expects 2 arguments, got %d", argsList.Len()))
+		return
+	}
+
+	path, ok := argsList.Front().Value.(string)
+	if !ok {
+		babashka.WriteErrorResponse(message, fmt.Errorf("first argument must be a string (path)"))
+		return
+	}
+
+	optsElement := argsList.Front().Next()
+	var opts map[interface{}]interface{}
+	if optsMap, ok := optsElement.Value.(map[interface{}]interface{}); ok {
+		opts = optsMap
+	} else {
+		babashka.WriteErrorResponse(message, fmt.Errorf("second argument must be a map (options)"))
+		return
+	}
+
+	result, err := podimage.DrawText(path, opts)
+	if err != nil {
+		babashka.WriteErrorResponse(message, err)
+		return
+	}
+
+	respond(message, result)
 }
